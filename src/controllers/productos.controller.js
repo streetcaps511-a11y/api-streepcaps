@@ -1,4 +1,4 @@
-const { Productos } = require('../models');
+const Productos = require('../models/Productos');
 
 const productosController = {
   getAll: async (req, res) => {
@@ -49,6 +49,26 @@ const productosController = {
       res.json({ success: true, message: 'Producto eliminado exitosamente' });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Error al eliminar producto', error: error.message });
+    }
+  },
+
+  getByCategoria: async (req, res) => {
+    try {
+      const { categoriaId } = req.params;
+      const productos = await Productos.getByCategoria(categoriaId);
+      res.json({ success: true, data: productos });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al obtener productos por categoría', error: error.message });
+    }
+  },
+
+  getByTalla: async (req, res) => {
+    try {
+      const { tallaId } = req.params;
+      const productos = await Productos.getByTalla(tallaId);
+      res.json({ success: true, data: productos });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al obtener productos por talla', error: error.message });
     }
   }
 };
