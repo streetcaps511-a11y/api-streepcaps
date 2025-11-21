@@ -1,9 +1,10 @@
-const { Estado } = require('../models');
+// src/controllers/estados.controller.js
+const Estados = require('../models/Estado'); // Importa tu model correctamente
 
 const estadoController = {
   getAll: async (req, res) => {
     try {
-      const estados = await Estado.getAll();
+      const estados = await Estados.getAll();
       res.json({ success: true, data: estados });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Error al obtener estados', error: error.message });
@@ -13,7 +14,7 @@ const estadoController = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const estado = await Estado.getById(id);
+      const estado = await Estados.getById(id);
       if (!estado) return res.status(404).json({ success: false, message: 'Estado no encontrado' });
       res.json({ success: true, data: estado });
     } catch (error) {
@@ -23,7 +24,7 @@ const estadoController = {
 
   create: async (req, res) => {
     try {
-      const estado = await Estado.create(req.body);
+      const estado = await Estados.create(req.body);
       res.status(201).json({ success: true, message: 'Estado creado exitosamente', data: estado });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Error al crear estado', error: error.message });
@@ -33,7 +34,7 @@ const estadoController = {
   update: async (req, res) => {
     try {
       const { id } = req.params;
-      const estado = await Estado.update(id, req.body);
+      const estado = await Estados.update(id, req.body);
       if (!estado) return res.status(404).json({ success: false, message: 'Estado no encontrado' });
       res.json({ success: true, message: 'Estado actualizado exitosamente', data: estado });
     } catch (error) {
@@ -44,7 +45,7 @@ const estadoController = {
   delete: async (req, res) => {
     try {
       const { id } = req.params;
-      const estado = await Estado.delete(id);
+      const estado = await Estados.delete(id);
       if (!estado) return res.status(404).json({ success: false, message: 'Estado no encontrado' });
       res.json({ success: true, message: 'Estado eliminado exitosamente' });
     } catch (error) {

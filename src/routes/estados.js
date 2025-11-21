@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const estadosController = require('../controllers/estados.controller');
+const estadosController = require('../controllers/estado.controller');
 
 // GET /api/estados - Obtener todos los estados
 router.get('/', estadosController.getAll);

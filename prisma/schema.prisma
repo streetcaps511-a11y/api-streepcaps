@@ -9,20 +9,19 @@ datasource db {
 }
 
 model Productos {
-  IdProducto    Int              @id @default(autoincrement())
-  Nombre        String           @db.VarChar(255)
-  Descripcion   String?          @db.Text
-  Stock         Int              @default(0)
-  Precio        Float            @db.Decimal(10, 2)
-  Estado        Boolean          @default(true)
-  IdCategoria   Int
-  Color         String?          @db.VarChar(100)
-  url           String?          @db.VarChar(500)
-  IdTallas      Int
+  IdProducto     Int              @id @default(autoincrement())
+  Nombre         String           @db.VarChar(255)
+  Descripcion    String?          @db.Text
+  Stock          Int              @default(0)
+  Precio         Decimal          @db.Decimal(10, 2)
+  Estado         Boolean          @default(true)
+  IdCategoria    Int
+  Color          String?          @db.VarChar(100)
+  url            String?          @db.VarChar(500)
+  IdTallas       Int
 
-  // Relaciones
-  Categoria     Categorias       @relation(fields: [IdCategoria], references: [IdCategoria])
-  Talla         Tallas           @relation(fields: [IdTallas], references: [IdTalla])
+  Categoria      Categorias       @relation(fields: [IdCategoria], references: [IdCategoria])
+  Talla          Tallas           @relation(fields: [IdTallas], references: [IdTalla])
   DetalleCompras DetalleCompras[]
   DetalleVentas  DetalleVentas[]
   Devoluciones   Devoluciones[]
@@ -31,16 +30,16 @@ model Productos {
 }
 
 model Proveedores {
-  IdProveedor    Int       @id @default(autoincrement())
-  Nombre         String    @db.VarChar(255)
-  TipoDocumento  String?   @db.VarChar(50)
-  NumeroDocumento String?  @db.VarChar(50) @unique
-  Telefono       String?   @db.VarChar(20)
-  Direccion      String?   @db.Text
-  Correo         String?   @db.VarChar(100)
-  Estado         Boolean   @default(true)
+  IdProveedor     Int       @id @default(autoincrement())
+  Nombre          String    @db.VarChar(255)
+  TipoDocumento   String?   @db.VarChar(50)
+  NumeroDocumento String?   @db.VarChar(50) @unique
+  Telefono        String?   @db.VarChar(20)
+  Direccion       String?   @db.Text
+  Correo          String?   @db.VarChar(100)
+  Estado          Boolean   @default(true)
 
-  Compras        Compras[]
+  Compras         Compras[]
 
   @@map("Proveedores")
 }
@@ -56,13 +55,13 @@ model Categorias {
 }
 
 model Compras {
-  IdCompra     Int              @id @default(autoincrement())
-  IdProveedor  Int
-  Fecha        DateTime         @default(now()) @db.Timestamp
-  Total        Float            @db.Decimal(10, 2) @default(0)
-  Estado       Boolean          @default(true)
+  IdCompra      Int              @id @default(autoincrement())
+  IdProveedor   Int
+  Fecha         DateTime         @default(now()) @db.Timestamp
+  Total         Decimal          @db.Decimal(10, 2) @default(0)
+  Estado        Boolean          @default(true)
 
-  Proveedor    Proveedores      @relation(fields: [IdProveedor], references: [IdProveedor])
+  Proveedor     Proveedores      @relation(fields: [IdProveedor], references: [IdProveedor])
   DetalleCompras DetalleCompras[]
 
   @@map("Compras")
@@ -73,8 +72,8 @@ model DetalleCompras {
   IdCompra        Int
   IdProducto      Int
   Cantidad        Int
-  Precio          Float     @db.Decimal(10, 2)
-  Subtotal        Float     @db.Decimal(10, 2)
+  Precio          Decimal   @db.Decimal(10, 2)
+  Subtotal        Decimal   @db.Decimal(10, 2)
 
   Compra          Compras   @relation(fields: [IdCompra], references: [IdCompra], onDelete: Cascade)
   Producto        Productos @relation(fields: [IdProducto], references: [IdProducto], onDelete: Cascade)
@@ -89,7 +88,7 @@ model Devoluciones {
   Cantidad     Int
   Motivo       String?  @db.Text
   Fecha        DateTime @default(now()) @db.Timestamp
-  Monto        Float    @db.Decimal(10, 2)
+  Monto        Decimal  @db.Decimal(10, 2)
 
   Producto     Productos @relation(fields: [IdProducto], references: [IdProducto], onDelete: Cascade)
   Venta        Ventas    @relation(fields: [IdVenta], references: [IdVenta], onDelete: Cascade)
@@ -114,14 +113,14 @@ model Clientes {
 }
 
 model Ventas {
-  IdVenta   Int              @id @default(autoincrement())
-  IdCliente Int
-  IdEstado  Int
-  Fecha     DateTime         @default(now()) @db.Timestamp
-  Total     Float            @db.Decimal(10, 2) @default(0)
+  IdVenta       Int              @id @default(autoincrement())
+  IdCliente     Int
+  IdEstado      Int
+  Fecha         DateTime         @default(now()) @db.Timestamp
+  Total         Decimal          @db.Decimal(10, 2) @default(0)
 
-  Cliente   Clientes         @relation(fields: [IdCliente], references: [IdCliente])
-  Estado    Estado           @relation(fields: [IdEstado], references: [IdEstado])
+  Cliente       Clientes         @relation(fields: [IdCliente], references: [IdCliente])
+  Estado        Estado           @relation(fields: [IdEstado], references: [IdEstado])
   DetalleVentas DetalleVentas[]
   Devoluciones  Devoluciones[]
 
@@ -133,14 +132,15 @@ model DetalleVentas {
   IdVenta        Int
   IdProducto     Int
   Cantidad       Int
-  Precio         Float     @db.Decimal(10, 2)
-  Subtotal       Float     @db.Decimal(10, 2)
+  Precio         Decimal   @db.Decimal(10, 2)
+  Subtotal       Decimal   @db.Decimal(10, 2)
 
   Venta          Ventas    @relation(fields: [IdVenta], references: [IdVenta], onDelete: Cascade)
   Producto       Productos @relation(fields: [IdProducto], references: [IdProducto], onDelete: Cascade)
 
   @@map("DetalleVentas")
 }
+
 
 model Usuarios {
   IdUsuario Int    @id @default(autoincrement())

@@ -1,47 +1,57 @@
-// src/config/database.js - VERSIÓN MEJORADA
-let prisma;
+// src/controllers/roles.controller.js
+const { Roles } = require('../models');
 
-try {
-  const { PrismaClient } = require('@prisma/client');
-  prisma = new PrismaClient({
-    log: ['query'],
-    errorFormat: 'pretty',
-  });
-  console.log('✅ Prisma Client inicializado correctamente');
-} catch (error) {
-  console.log('⚠️  Prisma Client no disponible, usando modo desarrollo...');
-  console.log('💡 Ejecuta: npx prisma generate');
-  
-  // Mock temporal completo para desarrollo
-  prisma = {
-    $connect: () => Promise.resolve(),
-    $disconnect: () => Promise.resolve(),
-    $transaction: (fn) => fn(prisma),
-    
-    // Mocks para todas las tablas
-    productos: createMockMethods('Productos'),
-    categorias: createMockMethods('Categorias'),
-    proveedores: createMockMethods('Proveedores'),
-    usuarios: createMockMethods('Usuarios'),
-    roles: createMockMethods('Roles'),
-    compras: createMockMethods('Compras'),
-    ventas: createMockMethods('Ventas'),
-    clientes: createMockMethods('Clientes'),
-    tallas: createMockMethods('Tallas'),
-    estado: createMockMethods('Estado')
-  };
-}
+const rolesController = {
+  getAll: async (req, res) => {
+    try {
+      const roles = await Roles.getAll();
+      res.json({ success: true, data: roles });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al obtener roles', error: error.message });
+    }
+  },
 
-// Función helper para crear mocks
-function createMockMethods(modelName) {
-  return {
-    findMany: () => Promise.resolve([{ id: 1, nombre: `${modelName} Demo`, estado: true }]),
-    findUnique: () => Promise.resolve({ id: 1, nombre: `${modelName} Demo`, estado: true }),
-    create: (data) => Promise.resolve({ id: Date.now(), ...data, estado: true }),
-    update: () => Promise.resolve({ id: 1, nombre: `${modelName} Actualizado`, estado: true }),
-    delete: () => Promise.resolve({ id: 1, nombre: `${modelName} Eliminado`, estado: false }),
-    findFirst: () => Promise.resolve({ id: 1, nombre: `${modelName} Encontrado`, estado: true })
-  };
-}
+  getById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const rol = await Roles.getById(id);
+      if (!rol) return res.status(404).json({ success: false, message: 'Rol no encontrado' });
+      res.json({ success: true, data: rol });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al obtener rol', error: error.message });
+    }
+  },
 
-module.exports = prisma;
+  create: async (req, res) => {
+    try {
+      const rol = await Roles.create(req.body);
+      res.status(201).json({ success: true, message: 'Rol creado exitosamente', data: rol });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al crear rol', error: error.message });
+    }
+  },
+
+  update: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const rol = await Roles.update(id, req.body);
+      if (!rol) return res.status(404).json({ success: false, message: 'Rol no encontrado' });
+      res.json({ success: true, message: 'Rol actualizado exitosamente', data: rol });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al actualizar rol', error: error.message });
+    }
+  },
+
+  delete: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const rol = await Roles.delete(id);
+      if (!rol) return res.status(404).json({ success: false, message: 'Rol no encontrado' });
+      res.json({ success: true, message: 'Rol eliminado exitosamente' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Error al eliminar rol', error: error.message });
+    }
+  }
+};
+
+module.exports = rolesController;

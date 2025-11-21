@@ -15,7 +15,8 @@ const Ventas = {
               }
             }
           }
-        }
+        },
+        Devoluciones: true
       },
       orderBy: { Fecha: 'desc' }
     });
@@ -36,39 +37,23 @@ const Ventas = {
               }
             }
           }
-        }
+        },
+        Devoluciones: true
       }
     });
   },
 
   create: async (ventaData) => {
-    const { IdCliente, productos } = ventaData;
-    
+    const { IdCliente, IdEstado, productos } = ventaData;
     return await prisma.$transaction(async (prisma) => {
       const venta = await prisma.ventas.create({
-        data: {
-          IdCliente: parseInt(IdCliente),
-          IdEstado: 1,
-          Total: 0
-        }
+        data: { IdCliente: parseInt(IdCliente), IdEstado: parseInt(IdEstado), Total: 0 }
       });
 
       let totalVenta = 0;
 
       for (const producto of productos) {
-        const productoDB = await prisma.productos.findUnique({
-          where: { IdProducto: parseInt(producto.IdProducto) }
-        });
-
-        if (!productoDB) {
-          throw new Error(`Producto ${producto.IdProducto} no encontrado`);
-        }
-
-        if (productoDB.Stock < producto.Cantidad) {
-          throw new Error(`Stock insuficiente para ${productoDB.Nombre}`);
-        }
-
-        const subtotal = productoDB.Precio * producto.Cantidad;
+        const subtotal = producto.Precio * producto.Cantidad;
         totalVenta += subtotal;
 
         await prisma.detalleVentas.create({
@@ -76,14 +61,16 @@ const Ventas = {
             IdVenta: venta.IdVenta,
             IdProducto: parseInt(producto.IdProducto),
             Cantidad: producto.Cantidad,
-            Precio: productoDB.Precio,
+            Precio: producto.Precio,
             Subtotal: subtotal
           }
         });
 
         await prisma.productos.update({
           where: { IdProducto: parseInt(producto.IdProducto) },
-          data: { Stock: { decrement: producto.Cantidad } }
+          data: {
+            Stock: { decrement: producto.Cantidad }
+          }
         });
       }
 
@@ -94,38 +81,10 @@ const Ventas = {
           Cliente: true,
           Estado: true,
           DetalleVentas: {
-            include: {
-              Producto: {
-                include: {
-                  Categoria: true,
-                  Talla: true
-                }
-              }
-            }
+            include: { Producto: { include: { Categoria: true, Talla: true } } }
           }
         }
       });
-    });
-  },
-
-  updateEstado: async (id, IdEstado) => {
-    return await prisma.ventas.update({
-      where: { IdVenta: parseInt(id) },
-      data: { IdEstado: parseInt(IdEstado) },
-      include: {
-        Cliente: true,
-        Estado: true
-      }
-    });
-  },
-
-  getByCliente: async (clienteId) => {
-    return await prisma.ventas.findMany({
-      where: { IdCliente: parseInt(clienteId) },
-      include: {
-        Cliente: true,
-        Estado: true
-      }
     });
   }
 };

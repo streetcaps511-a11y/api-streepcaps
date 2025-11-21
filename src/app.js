@@ -12,36 +12,38 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas API
 app.use('/api', require('./routes'));
 
-// Ruta de salud
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'API funcionando correctamente',
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      productos: '/api/productos',
-      categorias: '/api/categorias',
-      proveedores: '/api/proveedores',
-      compras: '/api/compras',
-      ventas: '/api/ventas',
-      clientes: '/api/clientes',
-      usuarios: '/api/usuarios',
-      roles: '/api/roles',
-      permisos: '/api/permisos',
-      estados: '/api/estados',
-      tallas: '/api/tallas',
-      devoluciones: '/api/devoluciones'
-    }
-  });
+// Ruta principal con links simples clickeables
+app.get('/', (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}/api`;
+  const endpoints = {
+    productos: `${baseUrl}/productos`,
+    categorias: `${baseUrl}/categorias`,
+    proveedores: `${baseUrl}/proveedores`,
+    compras: `${baseUrl}/compras`,
+    detalleCompras: `${baseUrl}/detallecompras`,
+    ventas: `${baseUrl}/ventas`,
+    detalleVentas: `${baseUrl}/detalleventas`,
+    clientes: `${baseUrl}/clientes`,
+    usuarios: `${baseUrl}/usuarios`,
+    roles: `${baseUrl}/roles`,
+    permisos: `${baseUrl}/permisos`,
+    estados: `${baseUrl}/estados`,
+    tallas: `${baseUrl}/tallas`,
+    devoluciones: `${baseUrl}/devoluciones`
+  };
+
+  let html = '<html><body><h1>API Gestión de Productos</h1><ul>';
+  for (const key in endpoints) {
+    html += `<li><a href="${endpoints[key]}" target="_blank">${key}</a></li>`;
+  }
+  html += '</ul></body></html>';
+
+  res.send(html);
 });
 
-// Ruta principal
-app.get('/', (req, res) => {
-  res.json({
-    message: '🚀 Bienvenido a la API de Gestión de Productos',
-    version: '1.0.0',
-    documentation: 'Consulta /health para ver todos los endpoints disponibles'
-  });
+// Ruta de salud simple
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'API funcionando correctamente', timestamp: new Date() });
 });
 
 // Manejo de errores 404
@@ -67,9 +69,7 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
-  console.log(`📊 Entorno: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 Health check: http://localhost:${PORT}/health`);
-  console.log(`🗄️  Base de datos: ${process.env.DATABASE_URL ? 'Conectada' : 'No configurada'}`);
+  console.log(`🌐 Abre en tu navegador: http://localhost:${PORT}`);
 });
 
 module.exports = app;
