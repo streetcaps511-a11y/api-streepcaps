@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas API
 app.use('/api', require('./routes'));
 
-// Ruta principal con links simples clickeables
+// Ruta principal con links clickeables
 app.get('/', (req, res) => {
   const baseUrl = `${req.protocol}://${req.get('host')}/api`;
   const endpoints = {
@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
   res.send(html);
 });
 
-// Ruta de salud simple
+// Ruta de salud
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'API funcionando correctamente', timestamp: new Date() });
 });
@@ -66,8 +66,7 @@ app.use((error, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
   console.log(`🌐 Abre en tu navegador: http://localhost:${PORT}`);
 });

@@ -10,15 +10,18 @@ const Usuarios = {
   },
 
   getById: async (id) => {
+    const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) return null;
+
     return await prisma.usuarios.findUnique({
-      where: { IdUsuario: parseInt(id), Estado: true },
+      where: { IdUsuario: idInt },
       include: { Rol: true }
     });
   },
 
   create: async (usuarioData) => {
     const hashedPassword = await bcrypt.hash(usuarioData.Clave, 10);
-    
+
     return await prisma.usuarios.create({
       data: {
         ...usuarioData,
@@ -30,33 +33,37 @@ const Usuarios = {
   },
 
   update: async (id, usuarioData) => {
+    const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) return null;
+
     if (usuarioData.Clave) {
       usuarioData.Clave = await bcrypt.hash(usuarioData.Clave, 10);
     }
-    
+
     return await prisma.usuarios.update({
-      where: { IdUsuario: parseInt(id) },
+      where: { IdUsuario: idInt },
       data: usuarioData,
       include: { Rol: true }
     });
   },
 
   delete: async (id) => {
+    const idInt = parseInt(id, 10);
+    if (isNaN(idInt)) return null;
+
     return await prisma.usuarios.update({
-      where: { IdUsuario: parseInt(id) },
+      where: { IdUsuario: idInt },
       data: { Estado: false }
     });
   },
 
   login: async (Correo, Clave) => {
     const usuario = await prisma.usuarios.findUnique({
-      where: { Correo, Estado: true },
+      where: { Correo },
       include: { Rol: true }
     });
 
-    if (!usuario) {
-      return null;
-    }
+    if (!usuario || !usuario.Estado) return null;
 
     const isValid = await bcrypt.compare(Clave, usuario.Clave);
     return isValid ? usuario : null;
