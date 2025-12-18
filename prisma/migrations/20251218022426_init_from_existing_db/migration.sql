@@ -7,7 +7,6 @@ CREATE TABLE "Productos" (
     "Precio" DECIMAL(10,2) NOT NULL,
     "Estado" BOOLEAN NOT NULL DEFAULT true,
     "IdCategoria" INTEGER NOT NULL,
-    "Color" VARCHAR(100),
     "url" VARCHAR(500),
     "IdTallas" INTEGER NOT NULL,
 
