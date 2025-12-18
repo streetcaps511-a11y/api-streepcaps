@@ -9,15 +9,14 @@ datasource db {
 }
 
 model Productos {
-  IdProducto     Int              @id @default(autoincrement())
-  Nombre         String           @db.VarChar(255)
-  Descripcion    String?          @db.Text
-  Stock          Int              @default(0)
-  Precio         Decimal          @db.Decimal(10, 2)
-  Estado         Boolean          @default(true)
+  IdProducto     Int       @id @default(autoincrement())
+  Nombre         String    @db.VarChar(255)
+  Descripcion    String?   @db.Text
+  Stock          Int       @default(0)
+  Precio         Decimal   @db.Decimal(10, 2)
+  Estado         Boolean   @default(true)
   IdCategoria    Int
-  Color          String?          @db.VarChar(100)
-  url            String?          @db.VarChar(500)
+  url            String?   @db.VarChar(500)
   IdTallas       Int
 
   Categoria      Categorias       @relation(fields: [IdCategoria], references: [IdCategoria])
@@ -28,6 +27,7 @@ model Productos {
 
   @@map("Productos")
 }
+
 
 model Proveedores {
   IdProveedor     Int       @id @default(autoincrement())
