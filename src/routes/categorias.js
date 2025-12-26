@@ -1,20 +1,31 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const categoriasController = require('../controllers/categorias.controller');
+const categoriasController = require("../controllers/categorias.controller");
 
-// GET /api/categorias - Obtener todas las categorías
-router.get('/', categoriasController.getAll);
+// ================================
+// 📌 CATEGORÍAS
+// ================================
 
-// GET /api/categorias/:id - Obtener categoría por ID
-router.get('/:id', categoriasController.getById);
+// Obtener todas las categorías
+// GET /api/categorias
+router.get("/", categoriasController.getAll);
 
-// POST /api/categorias - Crear nueva categoría
-router.post('/', categoriasController.create);
+// Obtener categoría por ID
+// GET /api/categorias/:id
+router.get("/:id", categoriasController.getById);
 
-// PUT /api/categorias/:id - Actualizar categoría
-router.put('/:id', categoriasController.update);
+// Crear nueva categoría
+// POST /api/categorias
+// ✔ imagenUrl (string)
+// ✔ activo (boolean)
+router.post("/", categoriasController.create);
 
-// DELETE /api/categorias/:id - Eliminar categoría (soft delete)
-router.delete('/:id', categoriasController.delete);
+// Actualizar categoría
+// PUT /api/categorias/:id
+router.put("/:id", categoriasController.update);
+
+// Eliminar categoría (soft delete)
+// DELETE /api/categorias/:id
+router.delete("/:id", categoriasController.delete);
 
 module.exports = router;
